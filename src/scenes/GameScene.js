@@ -6,20 +6,21 @@ export default class GameScene extends Phaser.Scene {
     this.scoreX = 0;
     this.scoreO = 0;
     this.moves = [];
-    this.gridOffsetY = 100; // sposta la griglia più in basso
+    this.gridOffsetY = 100; 
     this.winText = null;
+    this.moveCount = 0; // conteggio mosse per gestire il pareggio
   }
 
   create() {
     this.drawGrid();
 
-    // Leaderboard in alto
+    // Leaderboard
     this.scoreText = this.add.text(300, 40, this.getScoreText(), {
       fontSize: '28px',
       color: '#fff'
     }).setOrigin(0.5);
 
-    // Bottone Restart in basso
+    // Restart
     this.restartButton = this.add.text(300, 710, "Restart", {
       fontSize: '28px',
       color: '#0f0',
@@ -31,16 +32,13 @@ export default class GameScene extends Phaser.Scene {
       this.resetBoard();
     });
 
-    // Attiva input per giocare
     this.enableInput();
   }
 
   drawGrid() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
     for (let i = 1; i < 3; i++) {
-      // Verticali
       graphics.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
-      // Orizzontali
       graphics.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
     }
   }
@@ -50,21 +48,17 @@ export default class GameScene extends Phaser.Scene {
   }
 
   resetBoard() {
-    // Reset logica griglia
     this.board = Array(3).fill().map(() => Array(3).fill(null));
     this.currentPlayer = 'X';
-
-    // Elimino tutte le mosse disegnate
     this.moves.forEach(move => move.destroy());
     this.moves = [];
+    this.moveCount = 0;
 
-    // Elimino eventuale messaggio di vittoria
     if (this.winText) {
       this.winText.destroy();
       this.winText = null;
     }
 
-    // Riattivo input
     this.input.removeAllListeners();
     this.enableInput();
   }
@@ -78,6 +72,8 @@ export default class GameScene extends Phaser.Scene {
       if (this.board[row][col]) return;
 
       this.board[row][col] = this.currentPlayer;
+      this.moveCount++;
+
       const cx = col * 200 + 100;
       const cy = row * 200 + 100 + this.gridOffsetY;
 
@@ -98,7 +94,17 @@ export default class GameScene extends Phaser.Scene {
         this.scoreText.setText(this.getScoreText());
 
         this.input.removeAllListeners();
-      } else {
+      } 
+      else if (this.moveCount === 9) { 
+        // Pareggio
+        this.winText = this.add.text(300, 660, "Pareggio!", {
+          fontSize: '24px',
+          color: '#ff0'
+        }).setOrigin(0.5);
+
+        this.input.removeAllListeners();
+      } 
+      else {
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
       }
     });
