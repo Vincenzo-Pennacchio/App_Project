@@ -5,6 +5,20 @@ export default class GameScene extends Phaser.Scene {
     this.currentPlayer = 'X';
   }
 
+  // Disegna un cerchio (O)
+  drawO(x, y) {
+    const g = this.add.graphics({ lineStyle: { width: 8, color: 0x00aaff } });
+    g.strokeCircle(x, y, 70);
+  }
+
+  // Disegna una X
+  drawX(x, y) {
+    const g = this.add.graphics({ lineStyle: { width: 8, color: 0xff5555 } });
+    const size = 70;
+    g.strokeLineShape(new Phaser.Geom.Line(x - size, y - size, x + size, y + size));
+    g.strokeLineShape(new Phaser.Geom.Line(x - size, y + size, x + size, y - size));
+  }
+
   create() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
 
@@ -21,10 +35,15 @@ export default class GameScene extends Phaser.Scene {
 
       if (!this.board[row][col]) {
         this.board[row][col] = this.currentPlayer;
-        this.add.text(col * 200 + 100, row * 200 + 100, this.currentPlayer, {
-          fontSize: '96px',
-          color: '#fff'
-        }).setOrigin(0.5);
+
+        const cx = col * 200 + 100;
+        const cy = row * 200 + 100;
+
+        if (this.currentPlayer === 'X') {
+          this.drawX(cx, cy);
+        } else {
+          this.drawO(cx, cy);
+        }
 
         if (this.checkWinner()) {
           this.add.text(300, 570, this.currentPlayer + ' ha vinto!', {
