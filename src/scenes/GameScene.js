@@ -17,7 +17,19 @@ export default class GameScene extends Phaser.Scene {
     const size = 70;
     g.strokeLineShape(new Phaser.Geom.Line(x - size, y - size, x + size, y + size));
     g.strokeLineShape(new Phaser.Geom.Line(x - size, y + size, x + size, y - size));
+
+    g.setScale(0); // parte piccolissimo
+    g.setPosition(x, y); // imposto il centro come origine
+    g.setOrigin?.(0.5); // sicurezza, se supportato
+
+    this.tweens.add({
+      targets: g,
+      scale: 1,
+      duration: 300,
+      ease: 'Back.Out'
+    });
   }
+
 
   create() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
