@@ -7,6 +7,7 @@ export default class GameScene extends Phaser.Scene {
     this.scoreO = 0;
     this.moves = [];
     this.gridOffsetY = 100; // sposta la griglia più in basso
+    this.winText = null;
   }
 
   create() {
@@ -30,41 +31,8 @@ export default class GameScene extends Phaser.Scene {
       this.resetBoard();
     });
 
-    // Input click per posizionare X/O
-    this.input.on('pointerdown', (pointer) => {
-      const col = Math.floor(pointer.x / 200);
-      const row = Math.floor((pointer.y - this.gridOffsetY) / 200);
-
-      if (row < 0 || row > 2 || col < 0 || col > 2) return; // fuori griglia
-
-      if (!this.board[row][col]) {
-        this.board[row][col] = this.currentPlayer;
-
-        const cx = col * 200 + 100;
-        const cy = row * 200 + 100 + this.gridOffsetY;
-
-        if (this.currentPlayer === 'X') {
-          this.moves.push(this.drawX(cx, cy));
-        } else {
-          this.moves.push(this.drawO(cx, cy));
-        }
-
-        if (this.checkWinner()) {
-          this.add.text(300, 660, this.currentPlayer + ' ha vinto!', {
-            fontSize: '24px',
-            color: '#ff0'
-          }).setOrigin(0.5);
-
-          if (this.currentPlayer === 'X') this.scoreX++;
-          else this.scoreO++;
-          this.scoreText.setText(this.getScoreText());
-
-          this.input.removeAllListeners();
-        } else {
-          this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-        }
-      }
-    });
+    // Attiva input per giocare
+    this.enableInput();
   }
 
   drawGrid() {
@@ -82,14 +50,58 @@ export default class GameScene extends Phaser.Scene {
   }
 
   resetBoard() {
+    // Reset logica griglia
     this.board = Array(3).fill().map(() => Array(3).fill(null));
     this.currentPlayer = 'X';
 
+    // Elimino tutte le mosse disegnate
     this.moves.forEach(move => move.destroy());
     this.moves = [];
 
+    // Elimino eventuale messaggio di vittoria
+    if (this.winText) {
+      this.winText.destroy();
+      this.winText = null;
+    }
+
+    // Riattivo input
     this.input.removeAllListeners();
-    this.create(); // ricrea tutto
+    this.enableInput();
+  }
+
+  enableInput() {
+    this.input.on('pointerdown', (pointer) => {
+      const col = Math.floor(pointer.x / 200);
+      const row = Math.floor((pointer.y - this.gridOffsetY) / 200);
+
+      if (row < 0 || row > 2 || col < 0 || col > 2) return;
+      if (this.board[row][col]) return;
+
+      this.board[row][col] = this.currentPlayer;
+      const cx = col * 200 + 100;
+      const cy = row * 200 + 100 + this.gridOffsetY;
+
+      if (this.currentPlayer === 'X') {
+        this.moves.push(this.drawX(cx, cy));
+      } else {
+        this.moves.push(this.drawO(cx, cy));
+      }
+
+      if (this.checkWinner()) {
+        this.winText = this.add.text(300, 660, this.currentPlayer + ' ha vinto!', {
+          fontSize: '24px',
+          color: '#ff0'
+        }).setOrigin(0.5);
+
+        if (this.currentPlayer === 'X') this.scoreX++;
+        else this.scoreO++;
+        this.scoreText.setText(this.getScoreText());
+
+        this.input.removeAllListeners();
+      } else {
+        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+      }
+    });
   }
 
   drawO(x, y) {
