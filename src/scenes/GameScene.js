@@ -9,7 +9,16 @@ export default class GameScene extends Phaser.Scene {
   drawO(x, y) {
     const g = this.add.graphics({ lineStyle: { width: 8, color: 0x00aaff } });
     g.strokeCircle(x, y, 70);
+
+    g.alpha = 0; // parte invisibile
+    this.tweens.add({
+      targets: g,
+      alpha: 1,
+      duration: 300, // 0.3 secondi
+      ease: 'Power2'
+    });
   }
+
 
   // Disegna una X
   drawX(x, y) {
