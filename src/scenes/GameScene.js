@@ -5,51 +5,55 @@ export default class GameScene extends Phaser.Scene {
     this.currentPlayer = 'X';
   }
 
-  // Disegna un cerchio (O)
+  // Disegna una O centrata usando un container (con fade-in)
   drawO(x, y) {
-    const g = this.add.graphics({ lineStyle: { width: 8, color: 0x00aaff } });
-    g.strokeCircle(x, y, 70);
+    const radius = 70;
+    const container = this.add.container(x, y);        // container centrato nella cella
+    const g = this.add.graphics();                     // graphics posizionato relativo al container
+    g.lineStyle(8, 0x00aaff);
+    g.strokeCircle(0, 0, radius);                     // cerchio centrato su (0,0) del container
+    container.add(g);
 
-    g.alpha = 0; // parte invisibile
+    // animazione fade-in
+    container.alpha = 0;
     this.tweens.add({
-      targets: g,
+      targets: container,
       alpha: 1,
-      duration: 300, // 0.3 secondi
+      duration: 300,
       ease: 'Power2'
     });
   }
 
-
-  // Disegna una X
+  // Disegna una X centrata usando un container (con zoom-in)
   drawX(x, y) {
-    const g = this.add.graphics({ lineStyle: { width: 8, color: 0xff5555 } });
     const size = 70;
-    g.strokeLineShape(new Phaser.Geom.Line(x - size, y - size, x + size, y + size));
-    g.strokeLineShape(new Phaser.Geom.Line(x - size, y + size, x + size, y - size));
+    const container = this.add.container(x, y);        // container centrato nella cella
+    const g = this.add.graphics();
+    g.lineStyle(8, 0xff5555);
 
-    g.setScale(0); // parte piccolissimo
-    g.setPosition(x, y); // imposto il centro come origine
-    g.setOrigin?.(0.5); // sicurezza, se supportato
+    // linee disegnate relative al centro (0,0) del container
+    g.strokeLineShape(new Phaser.Geom.Line(-size, -size, size, size));
+    g.strokeLineShape(new Phaser.Geom.Line(-size, size, size, -size));
+    container.add(g);
 
+    // animazione scale (zoom in) — lavora sul container, quindi il centro è corretto
+    container.setScale(0);
     this.tweens.add({
-      targets: g,
+      targets: container,
       scale: 1,
       duration: 300,
       ease: 'Back.Out'
     });
   }
 
-
   create() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
-
-    // Disegno la griglia
+    // griglia 600x600, celle da 200
     graphics.strokeLineShape(new Phaser.Geom.Line(200, 0, 200, 600));
     graphics.strokeLineShape(new Phaser.Geom.Line(400, 0, 400, 600));
     graphics.strokeLineShape(new Phaser.Geom.Line(0, 200, 600, 200));
     graphics.strokeLineShape(new Phaser.Geom.Line(0, 400, 600, 400));
 
-    // Input click
     this.input.on('pointerdown', (pointer) => {
       const col = Math.floor(pointer.x / 200);
       const row = Math.floor(pointer.y / 200);
@@ -81,15 +85,12 @@ export default class GameScene extends Phaser.Scene {
 
   checkWinner() {
     const b = this.board;
-
     for (let i = 0; i < 3; i++) {
       if (b[i][0] && b[i][0] === b[i][1] && b[i][1] === b[i][2]) return true;
       if (b[0][i] && b[0][i] === b[1][i] && b[1][i] === b[2][i]) return true;
     }
-
     if (b[0][0] && b[0][0] === b[1][1] && b[1][1] === b[2][2]) return true;
     if (b[0][2] && b[0][2] === b[1][1] && b[1][1] === b[2][0]) return true;
-
     return false;
   }
 }
