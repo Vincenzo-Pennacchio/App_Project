@@ -7,8 +7,9 @@ const config = {
   height: 750,
   backgroundColor: "#1a1a1a",
   scene: [StartScene, GameScene],
+  parent: "game", // opzionale: se hai un <div id="game"></div> in index.html
   dom: {
-    createContainer: true   // 👈 serve per usare this.add.dom()
+    createContainer: true // 👈 necessario per usare elementi DOM
   }
 };
 
