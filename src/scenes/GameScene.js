@@ -8,13 +8,17 @@ export default class GameScene extends Phaser.Scene {
     this.moves = [];
     this.gridOffsetY = 100; 
     this.winText = null;
-    this.moveCount = 0; // conteggio mosse per gestire il pareggio
+    this.moveCount = 0; 
+
+    // 👇 chiediamo i nomi dei giocatori
+    this.playerXName = prompt("Inserisci il nome del Giocatore X:", "Giocatore 1") || "Giocatore X";
+    this.playerOName = prompt("Inserisci il nome del Giocatore O:", "Giocatore 2") || "Giocatore O";
   }
 
   create() {
     this.drawGrid();
 
-    // Leaderboard
+    // Leaderboard con i nomi
     this.scoreText = this.add.text(300, 40, this.getScoreText(), {
       fontSize: '28px',
       color: '#fff'
@@ -44,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   getScoreText() {
-    return `X: ${this.scoreX} | O: ${this.scoreO}`;
+    return `${this.playerXName}: ${this.scoreX} | ${this.playerOName}: ${this.scoreO}`;
   }
 
   resetBoard() {
@@ -84,7 +88,9 @@ export default class GameScene extends Phaser.Scene {
       }
 
       if (this.checkWinner()) {
-        this.winText = this.add.text(300, 660, this.currentPlayer + ' ha vinto!', {
+        const winnerName = this.currentPlayer === 'X' ? this.playerXName : this.playerOName;
+
+        this.winText = this.add.text(300, 660, winnerName + ' ha vinto!', {
           fontSize: '24px',
           color: '#ff0'
         }).setOrigin(0.5);
@@ -96,7 +102,6 @@ export default class GameScene extends Phaser.Scene {
         this.input.removeAllListeners();
       } 
       else if (this.moveCount === 9) { 
-        // Pareggio
         this.winText = this.add.text(300, 660, "Pareggio!", {
           fontSize: '24px',
           color: '#ff0'
