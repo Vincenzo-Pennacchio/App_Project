@@ -4,9 +4,12 @@ import GameScene from "./scenes/GameScene.js";
 const config = {
   type: Phaser.AUTO,
   width: 600,
-  height: 750, // più alta per lasciare spazio
-  backgroundColor: '#1a1a1a',
-  scene: [StartScene, GameScene]
+  height: 750,
+  backgroundColor: "#1a1a1a",
+  scene: [StartScene, GameScene],
+  dom: {
+    createContainer: true   // 👈 serve per usare this.add.dom()
+  }
 };
 
 new Phaser.Game(config);
