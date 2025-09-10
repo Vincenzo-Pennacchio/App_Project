@@ -10,11 +10,12 @@ export default class GameScene extends Phaser.Scene {
     this.winText = null;
     this.moveCount = 0;
 
-    this.playerXName = "Giocatore X"; // valori di fallback
+    // valori di fallback (nel caso i dati non vengano passati)
+    this.playerXName = "Giocatore X";
     this.playerOName = "Giocatore O";
   }
 
-  // 👇 Riceviamo i dati da StartScene
+  // 👇 Riceviamo i dati passati da StartScene
   init(data) {
     this.playerXName = data.playerX || "Giocatore X";
     this.playerOName = data.playerO || "Giocatore O";
@@ -29,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
       color: '#fff'
     }).setOrigin(0.5);
 
-    // Restart
+    // Bottone Restart
     this.restartButton = this.add.text(300, 710, "Restart", {
       fontSize: '28px',
       color: '#0f0',
@@ -47,7 +48,9 @@ export default class GameScene extends Phaser.Scene {
   drawGrid() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
     for (let i = 1; i < 3; i++) {
+      // linee verticali
       graphics.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
+      // linee orizzontali
       graphics.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
     }
   }
@@ -95,7 +98,7 @@ export default class GameScene extends Phaser.Scene {
       if (this.checkWinner()) {
         const winnerName = this.currentPlayer === 'X' ? this.playerXName : this.playerOName;
 
-        this.winText = this.add.text(300, 660, winnerName + ' ha vinto!', {
+        this.winText = this.add.text(300, 660, `${winnerName} ha vinto!`, {
           fontSize: '24px',
           color: '#ff0'
         }).setOrigin(0.5);
