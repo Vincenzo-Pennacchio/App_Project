@@ -1,3 +1,4 @@
+import StartScene from "./scenes/StartScene.js";
 import GameScene from "./scenes/GameScene.js";
 
 const config = {
@@ -5,7 +6,7 @@ const config = {
   width: 600,
   height: 750, // più alta per lasciare spazio
   backgroundColor: '#1a1a1a',
-  scene: [GameScene]
+  scene: [StartScene, GameScene]
 };
 
 new Phaser.Game(config);
