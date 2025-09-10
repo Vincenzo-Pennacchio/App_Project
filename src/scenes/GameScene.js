@@ -6,13 +6,18 @@ export default class GameScene extends Phaser.Scene {
     this.scoreX = 0;
     this.scoreO = 0;
     this.moves = [];
-    this.gridOffsetY = 100; 
+    this.gridOffsetY = 100;
     this.winText = null;
-    this.moveCount = 0; 
+    this.moveCount = 0;
 
-    // 👇 chiediamo i nomi dei giocatori
-    this.playerXName = prompt("Inserisci il nome del Giocatore X:", "Giocatore 1") || "Giocatore X";
-    this.playerOName = prompt("Inserisci il nome del Giocatore O:", "Giocatore 2") || "Giocatore O";
+    this.playerXName = "Giocatore X"; // valori di fallback
+    this.playerOName = "Giocatore O";
+  }
+
+  // 👇 Riceviamo i dati da StartScene
+  init(data) {
+    this.playerXName = data.playerX || "Giocatore X";
+    this.playerOName = data.playerO || "Giocatore O";
   }
 
   create() {
