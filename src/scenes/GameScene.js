@@ -135,62 +135,14 @@ export default class GameScene extends Phaser.Scene {
     this.input.off("pointerdown");
 
     const modal = this.add.container(300, 400);
-    // Vibrant modal background with glowing border
-    const bg = this.add.rectangle(0, 0, 400, 200, 0x1a1aff, 0.92)
-      .setStrokeStyle(6, 0xfff700, 1)
-      .setShadow(0, 0, 24, 0xff1a75, true, true);
-
-    // Glowing message text
-    const text = this.add.text(0, -40, message, {
-      fontSize: "32px",
-      fontFamily: "Arial Black, Arial, sans-serif",
-      color: "#fff",
-      stroke: "#00ffd0",
-      strokeThickness: 3,
-      shadow: {
-        offsetX: 0,
-        offsetY: 0,
-        color: "#ff1a75",
-        blur: 16,
-        fill: true
-      }
-    }).setOrigin(0.5);
-
-    // Animated glowing button
+    const bg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8);
+    const text = this.add.text(0, -40, message, { fontSize: "28px", color: "#fff" }).setOrigin(0.5);
     const btn = this.add.text(0, 50, "OK", {
-      fontSize: "26px",
-      fontFamily: "Arial Black, Arial, sans-serif",
-      backgroundColor: "#fff700",
-      color: "#222",
-      padding: { x: 18, y: 10 },
-      stroke: "#00ffd0",
-      strokeThickness: 2,
-      shadow: {
-        offsetX: 0,
-        offsetY: 0,
-        color: "#ff1a75",
-        blur: 12,
-        fill: true
-      }
+      fontSize: "24px",
+      backgroundColor: "#222",
+      color: "#0f0",
+      padding: { x: 12, y: 6 }
     }).setOrigin(0.5).setInteractive();
-    this.tweens.add({
-      targets: btn,
-      scale: { from: 1, to: 1.12 },
-      alpha: { from: 0.7, to: 1 },
-      yoyo: true,
-      repeat: -1,
-      duration: 700
-    });
-
-    // Modal entrance animation
-    modal.setAlpha(0);
-    this.tweens.add({
-      targets: modal,
-      alpha: 1,
-      scale: { from: 0.8, to: 1 },
-      duration: 400,
-      ease: "Cubic.easeOut"
-    });
 
     btn.on("pointerdown", () => {
       modal.destroy();
