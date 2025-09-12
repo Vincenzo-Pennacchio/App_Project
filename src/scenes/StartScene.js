@@ -59,15 +59,12 @@ export default class StartScene extends Phaser.Scene {
       if (this._coinSpinTimer) {
         this._coinSpinTimer.remove(false);
         this._coinSpinTimer = null;
-        startBtn.node.disabled = false;
-        startBtn.node.style.backgroundColor = "";
       }
-      // Slot machine animation for 'Heads' and 'Tails'
-      let spinTexts = ["Heads", "Tails"];
+      // Slot machine animation for 'Testa' and 'Croce'
+      let spinTexts = ["Testa", "Croce"];
       let spinIndex = 0;
       let spinDuration = 1200; // ms
       let spinInterval = 80; // ms
-  // Non disabilitare il bottone Start Game
       this.coinResultText.setText("");
 
       // Animate text
@@ -84,9 +81,7 @@ export default class StartScene extends Phaser.Scene {
           const result = Math.random() < 0.5 ? "X" : "O";
           firstPlayer = result;
           const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
-          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Heads" : "Tails"})`);
-          startBtn.node.disabled = false;
-          startBtn.node.style.backgroundColor = "";
+          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Testa" : "Croce"})`);
           this._coinSpinTimer = null;
         }
       });
