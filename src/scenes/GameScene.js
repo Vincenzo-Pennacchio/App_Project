@@ -25,22 +25,66 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    // Gradient background
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x1a1aff, 1, 0xff1a75, 1, 0x00ffd0, 1, 0xfff700, 1, 1);
+    bg.fillRect(0, 0, 600, 750);
+
     this.drawGrid();
 
+    // Glowing animated score
     this.scoreText = this.add.text(300, 40, this.getScoreText(), {
-      fontSize: "28px",
-      color: "#fff"
+      fontSize: "32px",
+      fontFamily: "Arial Black, Arial, sans-serif",
+      color: "#fff",
+      stroke: "#fff700",
+      strokeThickness: 4,
+      shadow: {
+        offsetX: 0,
+        offsetY: 0,
+        color: "#00ffd0",
+        blur: 16,
+        fill: true
+      }
     }).setOrigin(0.5);
+    this.tweens.add({
+      targets: this.scoreText,
+      scale: { from: 1, to: 1.08 },
+      alpha: { from: 0.7, to: 1 },
+      yoyo: true,
+      repeat: -1,
+      duration: 900
+    });
 
-  this.enableInput();
+    // Fade-in animation for grid and score
+    this.scoreText.setAlpha(0);
+    this.tweens.add({
+      targets: this.scoreText,
+      alpha: 1,
+      y: this.scoreText.y + 10,
+      duration: 600,
+      delay: 200,
+      ease: "Cubic.easeOut"
+    });
+
+    this.enableInput();
   }
 
   drawGrid() {
-    const g = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
+    const g = this.add.graphics({ lineStyle: { width: 6, color: 0xfff700, alpha: 0.9 } });
     for (let i = 1; i < 3; i++) {
       g.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
       g.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
     }
+    // Glow effect for grid
+    g.setAlpha(0);
+    this.tweens.add({
+      targets: g,
+      alpha: 1,
+      duration: 700,
+      delay: 100,
+      ease: "Cubic.easeOut"
+    });
   }
 
   getScoreText() {
