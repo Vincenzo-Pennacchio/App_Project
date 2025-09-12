@@ -38,12 +38,12 @@ export default class StartScene extends Phaser.Scene {
   startBtn.node.disabled = false;
   startBtn.node.style.backgroundColor = "";
 
-    // Bottone Testa o Croce
+    // Bottone Heads o Tails
     const coinBtn = this.add.dom(300, 380, "button", {
       fontSize: "20px",
       padding: "6px 12px",
       cursor: "pointer"
-    }, "Testa o Croce");
+    }, "Heads o Tails");
 
     // Testo risultato
     this.coinResultText = this.add.text(300, 430, "", {
@@ -62,8 +62,8 @@ export default class StartScene extends Phaser.Scene {
         startBtn.node.disabled = false;
         startBtn.node.style.backgroundColor = "";
       }
-      // Slot machine animation for 'Testa' and 'Croce'
-      let spinTexts = ["Testa", "Croce"];
+      // Slot machine animation for 'Heads' and 'Tails'
+      let spinTexts = ["Heads", "Tails"];
       let spinIndex = 0;
       let spinDuration = 1200; // ms
       let spinInterval = 80; // ms
@@ -85,7 +85,7 @@ export default class StartScene extends Phaser.Scene {
           const result = Math.random() < 0.5 ? "X" : "O";
           firstPlayer = result;
           const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
-          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Testa" : "Croce"})`);
+          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Heads" : "Tails"})`);
           startBtn.node.disabled = false;
           startBtn.node.style.backgroundColor = "";
           this._coinSpinTimer = null;
@@ -98,12 +98,12 @@ export default class StartScene extends Phaser.Scene {
     startBtn.on("click", () => {
       const playerX = this.playerXInput.node.value || "Giocatore X";
       const playerO = this.playerOInput.node.value || "Giocatore O";
-      // Se il giocatore non ha scelto testa/croce, scegli casualmente
+      // Se il giocatore non ha scelto Heads/Tails, scegli casualmente
       let chosenPlayer = firstPlayer;
       if (!chosenPlayer) {
         chosenPlayer = Math.random() < 0.5 ? "X" : "O";
         const name = chosenPlayer === "X" ? playerX : playerO;
-        this.coinResultText.setText(`Inizia: ${name} (${chosenPlayer === "X" ? "Testa" : "Croce"})`);
+        this.coinResultText.setText(`Inizia: ${name} (${chosenPlayer === "X" ? "Heads" : "Tails"})`);
       }
       this.scene.start("GameScene", { playerX, playerO, firstPlayer: chosenPlayer });
     });
