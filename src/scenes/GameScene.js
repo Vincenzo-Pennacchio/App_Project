@@ -2,12 +2,13 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     super("GameScene");
     this.board = Array(3).fill().map(() => Array(3).fill(null));
-    this.currentPlayer = 'X';
+    this.currentPlayer = "X";
     this.scoreX = 0;
     this.scoreO = 0;
     this.moves = [];
     this.gridOffsetY = 100;
     this.moveCount = 0;
+    this.isModalOpen = false;
 
     this.playerXName = "Giocatore X";
     this.playerOName = "Giocatore O";
@@ -22,29 +23,18 @@ export default class GameScene extends Phaser.Scene {
     this.drawGrid();
 
     this.scoreText = this.add.text(300, 40, this.getScoreText(), {
-      fontSize: '28px',
-      color: '#fff'
+      fontSize: "28px",
+      color: "#fff"
     }).setOrigin(0.5);
-
-    this.restartButton = this.add.text(300, 710, "Restart", {
-      fontSize: '28px',
-      color: '#0f0',
-      backgroundColor: '#222',
-      padding: { x: 12, y: 6 }
-    }).setOrigin(0.5).setInteractive();
-
-    this.restartButton.on('pointerdown', () => {
-      this.resetBoard();
-    });
 
     this.enableInput();
   }
 
   drawGrid() {
-    const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
+    const g = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
     for (let i = 1; i < 3; i++) {
-      graphics.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
-      graphics.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
+      g.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
+      g.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
     }
   }
 
@@ -54,19 +44,19 @@ export default class GameScene extends Phaser.Scene {
 
   resetBoard() {
     this.board = Array(3).fill().map(() => Array(3).fill(null));
-    this.currentPlayer = 'X';
-    this.moves.forEach(move => move.destroy());
+    this.currentPlayer = "X";
+    this.moves.forEach(m => m.destroy());
     this.moves = [];
     this.moveCount = 0;
-    this.input.removeAllListeners();
     this.enableInput();
   }
 
   enableInput() {
-    this.input.on('pointerdown', (pointer) => {
+    this.input.on("pointerdown", (pointer) => {
+      if (this.isModalOpen) return; // 👈 blocca input se modale aperta
+
       const col = Math.floor(pointer.x / 200);
       const row = Math.floor((pointer.y - this.gridOffsetY) / 200);
-
       if (row < 0 || row > 2 || col < 0 || col > 2) return;
       if (this.board[row][col]) return;
 
@@ -75,85 +65,63 @@ export default class GameScene extends Phaser.Scene {
 
       const cx = col * 200 + 100;
       const cy = row * 200 + 100 + this.gridOffsetY;
-
-      if (this.currentPlayer === 'X') {
-        this.moves.push(this.drawX(cx, cy));
-      } else {
-        this.moves.push(this.drawO(cx, cy));
-      }
+      this.moves.push(this.currentPlayer === "X" ? this.drawX(cx, cy) : this.drawO(cx, cy));
 
       if (this.checkWinner()) {
-        const winnerName = this.currentPlayer === 'X' ? this.playerXName : this.playerOName;
-        if (this.currentPlayer === 'X') this.scoreX++;
-        else this.scoreO++;
+        const winnerName = this.currentPlayer === "X" ? this.playerXName : this.playerOName;
+        if (this.currentPlayer === "X") this.scoreX++; else this.scoreO++;
         this.scoreText.setText(this.getScoreText());
         this.showModal(`${winnerName} ha vinto!`);
-      } 
-      else if (this.moveCount === 9) { 
+      } else if (this.moveCount === 9) {
         this.showModal("Pareggio!");
-      } 
-      else {
-        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+      } else {
+        this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
       }
     });
   }
 
   showModal(message) {
-    // 🔹 overlay interattivo che cattura i click
-    const overlay = this.add.rectangle(300, 375, 600, 750, 0x000000, 0.7)
-      .setInteractive();
+    this.isModalOpen = true;
 
-    const box = this.add.rectangle(300, 375, 400, 200, 0x222222, 1)
-      .setStrokeStyle(4, 0xffffff);
-
-    const text = this.add.text(300, 340, message, {
-      fontSize: '28px',
-      color: '#fff',
-      align: 'center',
-      wordWrap: { width: 360 }
-    }).setOrigin(0.5);
-
-    const btn = this.add.text(300, 410, "OK", {
-      fontSize: '24px',
-      color: '#0f0',
-      backgroundColor: '#444',
+    const modal = this.add.container(300, 400);
+    const bg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8);
+    const text = this.add.text(0, -40, message, { fontSize: "28px", color: "#fff" }).setOrigin(0.5);
+    const btn = this.add.text(0, 50, "OK", {
+      fontSize: "24px",
+      backgroundColor: "#222",
+      color: "#0f0",
       padding: { x: 12, y: 6 }
     }).setOrigin(0.5).setInteractive();
 
-    const modal = this.add.container(0, 0, [overlay, box, text, btn]);
-
-    modal.setScale(0);
-    this.tweens.add({ targets: modal, scale: 1, duration: 300, ease: 'Back.Out' });
-
-    btn.on('pointerdown', () => {
+    btn.on("pointerdown", () => {
       modal.destroy();
-      this.resetBoard();
+      this.isModalOpen = false;
+      this.resetBoard(); // 👈 restart automatico
     });
+
+    modal.add([bg, text, btn]);
   }
 
   drawO(x, y) {
-    const radius = 70;
-    const container = this.add.container(x, y);
+    const c = this.add.container(x, y);
     const g = this.add.graphics();
-    g.lineStyle(8, 0x00aaff);
-    g.strokeCircle(0, 0, radius);
-    container.add(g);
-    container.alpha = 0;
-    this.tweens.add({ targets: container, alpha: 1, duration: 300, ease: 'Power2' });
-    return container;
+    g.lineStyle(8, 0x00aaff).strokeCircle(0, 0, 70);
+    c.add(g);
+    c.alpha = 0;
+    this.tweens.add({ targets: c, alpha: 1, duration: 300 });
+    return c;
   }
 
   drawX(x, y) {
-    const size = 70;
-    const container = this.add.container(x, y);
+    const c = this.add.container(x, y);
     const g = this.add.graphics();
     g.lineStyle(8, 0xff5555);
-    g.strokeLineShape(new Phaser.Geom.Line(-size, -size, size, size));
-    g.strokeLineShape(new Phaser.Geom.Line(-size, size, size, -size));
-    container.add(g);
-    container.setScale(0);
-    this.tweens.add({ targets: container, scale: 1, duration: 300, ease: 'Back.Out' });
-    return container;
+    g.strokeLineShape(new Phaser.Geom.Line(-70, -70, 70, 70));
+    g.strokeLineShape(new Phaser.Geom.Line(-70, 70, 70, -70));
+    c.add(g);
+    c.setScale(0);
+    this.tweens.add({ targets: c, scale: 1, duration: 300 });
+    return c;
   }
 
   checkWinner() {
