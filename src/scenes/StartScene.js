@@ -32,8 +32,10 @@ export default class StartScene extends Phaser.Scene {
     const startBtn = this.add.dom(300, 320, "button", {
       fontSize: "20px",
       padding: "6px 12px",
-      cursor: "pointer"
+      cursor: "pointer",
+      backgroundColor: "#888"
     }, "Start Game");
+    startBtn.node.disabled = true;
 
     // Bottone Testa o Croce
     const coinBtn = this.add.dom(300, 380, "button", {
@@ -52,11 +54,13 @@ export default class StartScene extends Phaser.Scene {
 
     coinBtn.addListener("click");
     coinBtn.on("click", () => {
-      // Testa = X, Croce = O
-      const result = Math.random() < 0.5 ? "X" : "O";
-      firstPlayer = result;
-      const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
-      this.coinResultText.setText(`Inizia: ${name} (${result})`);
+  // Testa = X, Croce = O
+  const result = Math.random() < 0.5 ? "X" : "O";
+  firstPlayer = result;
+  const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
+  this.coinResultText.setText(`Inizia: ${name} (${result})`);
+  startBtn.node.disabled = false;
+  startBtn.node.style.backgroundColor = "";
     });
 
     // Logica avvio
