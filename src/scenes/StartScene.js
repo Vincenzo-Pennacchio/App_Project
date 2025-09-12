@@ -43,7 +43,7 @@ export default class StartScene extends Phaser.Scene {
       fontSize: "20px",
       padding: "6px 12px",
       cursor: "pointer"
-    }, "Heads o Tails");
+    }, "Heads or Tails");
 
     // Testo risultato
     this.coinResultText = this.add.text(300, 430, "", {
