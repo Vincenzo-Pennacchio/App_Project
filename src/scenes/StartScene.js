@@ -67,8 +67,7 @@ export default class StartScene extends Phaser.Scene {
       let spinIndex = 0;
       let spinDuration = 1200; // ms
       let spinInterval = 80; // ms
-      startBtn.node.disabled = true;
-      startBtn.node.style.backgroundColor = "#888";
+  // Non disabilitare il bottone Start Game
       this.coinResultText.setText("");
 
       // Animate text
