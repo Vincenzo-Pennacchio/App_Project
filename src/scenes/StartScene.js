@@ -43,7 +43,7 @@ export default class StartScene extends Phaser.Scene {
       border: "2px solid #00ffd0",
       boxShadow: "0 0 12px #00ffd0, 0 0 4px #fff inset"
     });
-    this.playerXInput.node.placeholder = "Nome Giocatore X";
+    this.playerXInput.node.placeholder = "Player Name X";
 
     // Input per Giocatore O
     this.playerOInput = this.add.dom(300, 240, "input", {
@@ -55,7 +55,7 @@ export default class StartScene extends Phaser.Scene {
       border: "2px solid #ff1a75",
       boxShadow: "0 0 12px #ff1a75, 0 0 4px #fff inset"
     });
-    this.playerOInput.node.placeholder = "Nome Giocatore O";
+    this.playerOInput.node.placeholder = "Player Name O";
 
     // Bottone Start
     const startBtn = this.add.dom(300, 320, "button", {
@@ -89,8 +89,8 @@ export default class StartScene extends Phaser.Scene {
     // Logica avvio
     startBtn.addListener("click");
     startBtn.on("click", () => {
-      const playerX = this.playerXInput.node.value || "Giocatore X";
-      const playerO = this.playerOInput.node.value || "Giocatore O";
+      const playerX = this.playerXInput.node.value || "Player X";
+      const playerO = this.playerOInput.node.value || "Player O";
       // Scegli casualmente chi inizia
       const chosenPlayer = Math.random() < 0.5 ? "X" : "O";
       this.scene.start("GameScene", { playerX, playerO, firstPlayer: chosenPlayer });
