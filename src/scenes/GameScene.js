@@ -103,7 +103,10 @@ export default class GameScene extends Phaser.Scene {
     btn.on("pointerdown", () => {
       modal.destroy();
       this.isModalOpen = false;
-      this.resetBoard(); // 👈 restart automatico
+      // Delay re-enabling input to avoid accidental click on grid
+      setTimeout(() => {
+        this.resetBoard(); // 👈 restart automatico
+      }, 100);
     });
 
     modal.add([bg, text, btn]);
