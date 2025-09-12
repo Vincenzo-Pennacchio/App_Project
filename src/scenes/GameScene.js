@@ -25,35 +25,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-    // Exit button to return to StartScene
-    const exitBtn = this.add.text(560, 30, "⟵", {
-      fontSize: "32px",
-      fontFamily: "Arial Black, Arial, sans-serif",
-      color: "#fff700",
-      backgroundColor: "#ff1a75",
-      padding: { x: 12, y: 6 },
-      borderRadius: 12,
-      stroke: "#00ffd0",
-      strokeThickness: 3,
-      shadow: {
-        offsetX: 0,
-        offsetY: 0,
-        color: "#00ffd0",
-        blur: 12,
-        fill: true
-      }
-    }).setOrigin(1, 0.5).setInteractive();
-    this.tweens.add({
-      targets: exitBtn,
-      scale: { from: 1, to: 1.15 },
-      alpha: { from: 0.7, to: 1 },
-      yoyo: true,
-      repeat: -1,
-      duration: 700
-    });
-    exitBtn.on("pointerdown", () => {
-      this.scene.start("StartScene");
-    });
+
     // Gradient background
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x1a1aff, 1, 0xff1a75, 1, 0x00ffd0, 1, 0xfff700, 1, 1);
