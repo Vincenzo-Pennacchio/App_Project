@@ -67,6 +67,12 @@ export default class StartScene extends Phaser.Scene {
       let spinInterval = 80; // ms
       this.coinResultText.setText("");
 
+      // Choose result at start of animation
+      const result = Math.random() < 0.5 ? "X" : "O";
+      firstPlayer = result;
+      const finalText = result === "X" ? "Testa" : "Croce";
+      const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
+
       // Animate text
       this._coinSpinTimer = this.time.addEvent({
         delay: spinInterval,
@@ -77,11 +83,7 @@ export default class StartScene extends Phaser.Scene {
         },
         callbackScope: this,
         onComplete: () => {
-          // Choose result
-          const result = Math.random() < 0.5 ? "X" : "O";
-          firstPlayer = result;
-          const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
-          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Testa" : "Croce"})`);
+          this.coinResultText.setText(`Inizia: ${name} (${finalText})`);
           this._coinSpinTimer = null;
         }
       });
