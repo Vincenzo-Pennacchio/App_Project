@@ -54,13 +54,35 @@ export default class StartScene extends Phaser.Scene {
 
     coinBtn.addListener("click");
     coinBtn.on("click", () => {
-  // Testa = X, Croce = O
-  const result = Math.random() < 0.5 ? "X" : "O";
-  firstPlayer = result;
-  const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
-  this.coinResultText.setText(`Inizia: ${name} (${result})`);
-  startBtn.node.disabled = false;
-  startBtn.node.style.backgroundColor = "";
+      // Slot machine animation for 'Testa' and 'Croce'
+      let spinning = true;
+      let spinTexts = ["Testa", "Croce"];
+      let spinIndex = 0;
+      let spinDuration = 1200; // ms
+      let spinInterval = 80; // ms
+      startBtn.node.disabled = true;
+      startBtn.node.style.backgroundColor = "#888";
+      this.coinResultText.setText("");
+
+      // Animate text
+      const spinTimer = this.time.addEvent({
+        delay: spinInterval,
+        repeat: Math.floor(spinDuration / spinInterval) - 1,
+        callback: () => {
+          this.coinResultText.setText(spinTexts[spinIndex % 2]);
+          spinIndex++;
+        },
+        callbackScope: this,
+        onComplete: () => {
+          // Choose result
+          const result = Math.random() < 0.5 ? "X" : "O";
+          firstPlayer = result;
+          const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
+          this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Testa" : "Croce"})`);
+          startBtn.node.disabled = false;
+          startBtn.node.style.backgroundColor = "";
+        }
+      });
     });
 
     // Logica avvio
