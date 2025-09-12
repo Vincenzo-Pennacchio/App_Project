@@ -32,7 +32,7 @@ export default class GameScene extends Phaser.Scene {
       color: "#fff"
     }).setOrigin(0.5);
 
-    this.enableInput();
+  this.enableInput();
   }
 
   drawGrid() {
@@ -58,21 +58,20 @@ export default class GameScene extends Phaser.Scene {
   }
 
   enableInput() {
+    // Rimuovi eventuali listener precedenti
+    this.input.off("pointerdown");
+    // Aggiungi listener solo se la modale non è aperta
     this.input.on("pointerdown", (pointer) => {
-      if (this.isModalOpen) return; // 👈 blocca input se modale aperta
-
+      if (this.isModalOpen) return;
       const col = Math.floor(pointer.x / 200);
       const row = Math.floor((pointer.y - this.gridOffsetY) / 200);
       if (row < 0 || row > 2 || col < 0 || col > 2) return;
       if (this.board[row][col]) return;
-
       this.board[row][col] = this.currentPlayer;
       this.moveCount++;
-
       const cx = col * 200 + 100;
       const cy = row * 200 + 100 + this.gridOffsetY;
       this.moves.push(this.currentPlayer === "X" ? this.drawX(cx, cy) : this.drawO(cx, cy));
-
       if (this.checkWinner()) {
         const winnerName = this.currentPlayer === "X" ? this.playerXName : this.playerOName;
         if (this.currentPlayer === "X") this.scoreX++; else this.scoreO++;
@@ -88,6 +87,8 @@ export default class GameScene extends Phaser.Scene {
 
   showModal(message) {
     this.isModalOpen = true;
+    // Disabilita input sulla griglia
+    this.input.off("pointerdown");
 
     const modal = this.add.container(300, 400);
     const bg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8);
