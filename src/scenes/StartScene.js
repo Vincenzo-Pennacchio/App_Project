@@ -35,13 +35,38 @@ export default class StartScene extends Phaser.Scene {
       cursor: "pointer"
     }, "Start Game");
 
+    // Bottone Testa o Croce
+    const coinBtn = this.add.dom(300, 380, "button", {
+      fontSize: "20px",
+      padding: "6px 12px",
+      cursor: "pointer"
+    }, "Testa o Croce");
+
+    // Testo risultato
+    this.coinResultText = this.add.text(300, 430, "", {
+      fontSize: "24px",
+      color: "#fff"
+    }).setOrigin(0.5);
+
+    let firstPlayer = null;
+
+    coinBtn.addListener("click");
+    coinBtn.on("click", () => {
+      // Testa = X, Croce = O
+      const result = Math.random() < 0.5 ? "X" : "O";
+      firstPlayer = result;
+      const name = result === "X" ? (this.playerXInput.node.value || "Giocatore X") : (this.playerOInput.node.value || "Giocatore O");
+      this.coinResultText.setText(`Inizia: ${name} (${result})`);
+    });
+
     // Logica avvio
     startBtn.addListener("click");
     startBtn.on("click", () => {
       const playerX = this.playerXInput.node.value || "Giocatore X";
       const playerO = this.playerOInput.node.value || "Giocatore O";
 
-      this.scene.start("GameScene", { playerX, playerO });
+      // Passa il giocatore che deve iniziare
+      this.scene.start("GameScene", { playerX, playerO, firstPlayer });
     });
   }
 }

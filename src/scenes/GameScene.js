@@ -17,6 +17,11 @@ export default class GameScene extends Phaser.Scene {
   init(data) {
     this.playerXName = data.playerX || "Giocatore X";
     this.playerOName = data.playerO || "Giocatore O";
+    if (data.firstPlayer === "X" || data.firstPlayer === "O") {
+      this.currentPlayer = data.firstPlayer;
+    } else {
+      this.currentPlayer = "X";
+    }
   }
 
   create() {
@@ -43,8 +48,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   resetBoard() {
-    this.board = Array(3).fill().map(() => Array(3).fill(null));
-    this.currentPlayer = "X";
+  this.board = Array(3).fill().map(() => Array(3).fill(null));
+  // Mantieni il giocatore corrente dopo il reset
     this.moves.forEach(m => m.destroy());
     this.moves = [];
     this.moveCount = 0;
