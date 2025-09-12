@@ -7,15 +7,12 @@ export default class GameScene extends Phaser.Scene {
     this.scoreO = 0;
     this.moves = [];
     this.gridOffsetY = 100;
-    this.winText = null;
     this.moveCount = 0;
 
-    // valori di fallback (nel caso i dati non vengano passati)
     this.playerXName = "Giocatore X";
     this.playerOName = "Giocatore O";
   }
 
-  // 👇 Riceviamo i dati passati da StartScene
   init(data) {
     this.playerXName = data.playerX || "Giocatore X";
     this.playerOName = data.playerO || "Giocatore O";
@@ -24,13 +21,11 @@ export default class GameScene extends Phaser.Scene {
   create() {
     this.drawGrid();
 
-    // Leaderboard con i nomi
     this.scoreText = this.add.text(300, 40, this.getScoreText(), {
       fontSize: '28px',
       color: '#fff'
     }).setOrigin(0.5);
 
-    // Bottone Restart
     this.restartButton = this.add.text(300, 710, "Restart", {
       fontSize: '28px',
       color: '#0f0',
@@ -48,9 +43,7 @@ export default class GameScene extends Phaser.Scene {
   drawGrid() {
     const graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xffffff } });
     for (let i = 1; i < 3; i++) {
-      // linee verticali
       graphics.strokeLineShape(new Phaser.Geom.Line(i * 200, this.gridOffsetY, i * 200, 600 + this.gridOffsetY));
-      // linee orizzontali
       graphics.strokeLineShape(new Phaser.Geom.Line(0, i * 200 + this.gridOffsetY, 600, i * 200 + this.gridOffsetY));
     }
   }
@@ -65,12 +58,6 @@ export default class GameScene extends Phaser.Scene {
     this.moves.forEach(move => move.destroy());
     this.moves = [];
     this.moveCount = 0;
-
-    if (this.winText) {
-      this.winText.destroy();
-      this.winText = null;
-    }
-
     this.input.removeAllListeners();
     this.enableInput();
   }
@@ -97,29 +84,50 @@ export default class GameScene extends Phaser.Scene {
 
       if (this.checkWinner()) {
         const winnerName = this.currentPlayer === 'X' ? this.playerXName : this.playerOName;
-
-        this.winText = this.add.text(300, 660, `${winnerName} ha vinto!`, {
-          fontSize: '24px',
-          color: '#ff0'
-        }).setOrigin(0.5);
-
         if (this.currentPlayer === 'X') this.scoreX++;
         else this.scoreO++;
         this.scoreText.setText(this.getScoreText());
-
-        this.input.removeAllListeners();
+        this.showModal(`${winnerName} ha vinto!`);
       } 
       else if (this.moveCount === 9) { 
-        this.winText = this.add.text(300, 660, "Pareggio!", {
-          fontSize: '24px',
-          color: '#ff0'
-        }).setOrigin(0.5);
-
-        this.input.removeAllListeners();
+        this.showModal("Pareggio!");
       } 
       else {
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
       }
+    });
+  }
+
+  showModal(message) {
+    // 🔹 overlay interattivo che cattura i click
+    const overlay = this.add.rectangle(300, 375, 600, 750, 0x000000, 0.7)
+      .setInteractive();
+
+    const box = this.add.rectangle(300, 375, 400, 200, 0x222222, 1)
+      .setStrokeStyle(4, 0xffffff);
+
+    const text = this.add.text(300, 340, message, {
+      fontSize: '28px',
+      color: '#fff',
+      align: 'center',
+      wordWrap: { width: 360 }
+    }).setOrigin(0.5);
+
+    const btn = this.add.text(300, 410, "OK", {
+      fontSize: '24px',
+      color: '#0f0',
+      backgroundColor: '#444',
+      padding: { x: 12, y: 6 }
+    }).setOrigin(0.5).setInteractive();
+
+    const modal = this.add.container(0, 0, [overlay, box, text, btn]);
+
+    modal.setScale(0);
+    this.tweens.add({ targets: modal, scale: 1, duration: 300, ease: 'Back.Out' });
+
+    btn.on('pointerdown', () => {
+      modal.destroy();
+      this.resetBoard();
     });
   }
 
@@ -130,7 +138,6 @@ export default class GameScene extends Phaser.Scene {
     g.lineStyle(8, 0x00aaff);
     g.strokeCircle(0, 0, radius);
     container.add(g);
-
     container.alpha = 0;
     this.tweens.add({ targets: container, alpha: 1, duration: 300, ease: 'Power2' });
     return container;
@@ -144,7 +151,6 @@ export default class GameScene extends Phaser.Scene {
     g.strokeLineShape(new Phaser.Geom.Line(-size, -size, size, size));
     g.strokeLineShape(new Phaser.Geom.Line(-size, size, size, -size));
     container.add(g);
-
     container.setScale(0);
     this.tweens.add({ targets: container, scale: 1, duration: 300, ease: 'Back.Out' });
     return container;
