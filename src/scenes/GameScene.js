@@ -48,8 +48,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   resetBoard() {
-  this.board = Array(3).fill().map(() => Array(3).fill(null));
-  // Mantieni il giocatore corrente dopo il reset
+    this.board = Array(3).fill().map(() => Array(3).fill(null));
+    // Alterna il giocatore che inizia ogni partita
+    this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
     this.moves.forEach(m => m.destroy());
     this.moves = [];
     this.moveCount = 0;
