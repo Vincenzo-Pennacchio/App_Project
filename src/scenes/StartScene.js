@@ -54,8 +54,14 @@ export default class StartScene extends Phaser.Scene {
 
     coinBtn.addListener("click");
     coinBtn.on("click", () => {
+      // Prevent multiple animations overlapping
+      if (this._coinSpinTimer) {
+        this._coinSpinTimer.remove(false);
+        this._coinSpinTimer = null;
+        startBtn.node.disabled = false;
+        startBtn.node.style.backgroundColor = "";
+      }
       // Slot machine animation for 'Testa' and 'Croce'
-      let spinning = true;
       let spinTexts = ["Testa", "Croce"];
       let spinIndex = 0;
       let spinDuration = 1200; // ms
@@ -65,7 +71,7 @@ export default class StartScene extends Phaser.Scene {
       this.coinResultText.setText("");
 
       // Animate text
-      const spinTimer = this.time.addEvent({
+      this._coinSpinTimer = this.time.addEvent({
         delay: spinInterval,
         repeat: Math.floor(spinDuration / spinInterval) - 1,
         callback: () => {
@@ -81,6 +87,7 @@ export default class StartScene extends Phaser.Scene {
           this.coinResultText.setText(`Inizia: ${name} (${result === "X" ? "Testa" : "Croce"})`);
           startBtn.node.disabled = false;
           startBtn.node.style.backgroundColor = "";
+          this._coinSpinTimer = null;
         }
       });
     });
