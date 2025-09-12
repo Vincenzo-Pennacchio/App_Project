@@ -35,7 +35,8 @@ export default class StartScene extends Phaser.Scene {
       cursor: "pointer",
       backgroundColor: "#888"
     }, "Start Game");
-    startBtn.node.disabled = true;
+  startBtn.node.disabled = false;
+  startBtn.node.style.backgroundColor = "";
 
     // Bottone Testa o Croce
     const coinBtn = this.add.dom(300, 380, "button", {
@@ -97,9 +98,14 @@ export default class StartScene extends Phaser.Scene {
     startBtn.on("click", () => {
       const playerX = this.playerXInput.node.value || "Giocatore X";
       const playerO = this.playerOInput.node.value || "Giocatore O";
-
-      // Passa il giocatore che deve iniziare
-      this.scene.start("GameScene", { playerX, playerO, firstPlayer });
+      // Se il giocatore non ha scelto testa/croce, scegli casualmente
+      let chosenPlayer = firstPlayer;
+      if (!chosenPlayer) {
+        chosenPlayer = Math.random() < 0.5 ? "X" : "O";
+        const name = chosenPlayer === "X" ? playerX : playerO;
+        this.coinResultText.setText(`Inizia: ${name} (${chosenPlayer === "X" ? "Testa" : "Croce"})`);
+      }
+      this.scene.start("GameScene", { playerX, playerO, firstPlayer: chosenPlayer });
     });
   }
 }
