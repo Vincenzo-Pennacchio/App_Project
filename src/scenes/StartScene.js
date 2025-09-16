@@ -7,7 +7,7 @@ export default class StartScene extends Phaser.Scene {
     // Gradient background
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x1a1aff, 1, 0xff1a75, 1, 0x00ffd0, 1, 0xfff700, 1, 1);
-    bg.fillRect(0, 0, 600, 750);
+    bg.fillRect(0, 0, 600, 800);
 
     // Glowing animated title
     const title = this.add.text(300, 80, "Tic Tac Toe", {

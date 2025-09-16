@@ -29,7 +29,7 @@ export default class GameScene extends Phaser.Scene {
     // Gradient background
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x1a1aff, 1, 0xff1a75, 1, 0x00ffd0, 1, 0xfff700, 1, 1);
-    bg.fillRect(0, 0, 600, 750);
+    bg.fillRect(0, 0, 600, 800);
 
     // Exit button to return to StartScene (top left)
     const exitBtn = this.add.text(80, 30, "Exit", {
@@ -64,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
     this.drawGrid();
 
     // Glowing animated score
-    this.scoreText = this.add.text(300, 40, this.getScoreText(), {
+    this.scoreText = this.add.text(300, 60, this.getScoreText(), {
       fontSize: "32px",
       fontFamily: "Arial Black, Arial, sans-serif",
       color: "#fff",
