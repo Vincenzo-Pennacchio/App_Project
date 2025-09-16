@@ -33,7 +33,7 @@ export default class StartScene extends Phaser.Scene {
       duration: 900
     });
 
-    // Input per Giocatore X
+    // Input for Player X
     this.playerXInput = this.add.dom(300, 180, "input", {
       type: "text",
       fontSize: "22px",
@@ -45,7 +45,7 @@ export default class StartScene extends Phaser.Scene {
     });
     this.playerXInput.node.placeholder = "Player Name X";
 
-    // Input per Giocatore O
+    // Input for Player O
     this.playerOInput = this.add.dom(300, 240, "input", {
       type: "text",
       fontSize: "22px",
@@ -57,7 +57,7 @@ export default class StartScene extends Phaser.Scene {
     });
     this.playerOInput.node.placeholder = "Player Name O";
 
-    // Bottone Start
+    // Start Button
     const startBtn = this.add.dom(300, 320, "button", {
       fontSize: "24px",
       padding: "12px 32px",
@@ -86,12 +86,12 @@ export default class StartScene extends Phaser.Scene {
 
     // ...heads or tails button and animation removed...
 
-    // Logica avvio
+    // Start game logic
     startBtn.addListener("click");
     startBtn.on("click", () => {
       const playerX = this.playerXInput.node.value || "Player X";
       const playerO = this.playerOInput.node.value || "Player O";
-      // Scegli casualmente chi inizia
+      // Randomly choose who starts
       const chosenPlayer = Math.random() < 0.5 ? "X" : "O";
       this.scene.start("GameScene", { playerX, playerO, firstPlayer: chosenPlayer });
     });

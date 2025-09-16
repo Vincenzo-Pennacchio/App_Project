@@ -10,13 +10,13 @@ export default class GameScene extends Phaser.Scene {
     this.moveCount = 0;
     this.isModalOpen = false;
 
-    this.playerXName = "Giocatore X";
-    this.playerOName = "Giocatore O";
+    this.playerXName = "Player X";
+    this.playerOName = "Player O";
   }
 
   init(data) {
-    this.playerXName = data.playerX || "Giocatore X";
-    this.playerOName = data.playerO || "Giocatore O";
+    this.playerXName = data.playerX || "Player X";
+    this.playerOName = data.playerO || "Player O";
     if (data.firstPlayer === "X" || data.firstPlayer === "O") {
       this.currentPlayer = data.firstPlayer;
     } else {
@@ -95,7 +95,7 @@ export default class GameScene extends Phaser.Scene {
 
   resetBoard() {
     this.board = Array(3).fill().map(() => Array(3).fill(null));
-    // Alterna il giocatore che inizia ogni partita
+    // Alternate the starting player each game
     this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
     this.moves.forEach(m => m.destroy());
     this.moves = [];
@@ -104,9 +104,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   enableInput() {
-    // Rimuovi eventuali listener precedenti
+    // Remove any previous listeners
     this.input.off("pointerdown");
-    // Aggiungi listener solo se la modale non è aperta
+    // Add listener only if modal is not open
     this.input.on("pointerdown", (pointer) => {
       if (this.isModalOpen) return;
       const col = Math.floor(pointer.x / 200);
@@ -122,9 +122,9 @@ export default class GameScene extends Phaser.Scene {
         const winnerName = this.currentPlayer === "X" ? this.playerXName : this.playerOName;
         if (this.currentPlayer === "X") this.scoreX++; else this.scoreO++;
         this.scoreText.setText(this.getScoreText());
-        this.showModal(`${winnerName} ha vinto!`);
+        this.showModal(`${winnerName} wins!`);
       } else if (this.moveCount === 9) {
-        this.showModal("Pareggio!");
+        this.showModal("It's a tie!");
       } else {
         this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
       }
@@ -133,7 +133,7 @@ export default class GameScene extends Phaser.Scene {
 
   showModal(message) {
     this.isModalOpen = true;
-    // Disabilita input sulla griglia
+    // Disable grid input
     this.input.off("pointerdown");
 
     const modal = this.add.container(300, 350);
@@ -141,7 +141,7 @@ export default class GameScene extends Phaser.Scene {
     bg.setStrokeStyle(4, 0xff1a75);
     
     // Check if it's a game over message
-    const isGameOver = message.includes("vinto") || message.includes("Pareggio");
+    const isGameOver = message.includes("wins") || message.includes("tie");
     
     if (isGameOver) {
       // Game over modal with play again options
@@ -162,7 +162,7 @@ export default class GameScene extends Phaser.Scene {
         }
       }).setOrigin(0.5);
       
-      const playAgainText = this.add.text(0, -10, "Vuoi giocare ancora?", {
+      const playAgainText = this.add.text(0, -10, "Do you want to play again?", {
         fontSize: "20px",
         fontFamily: "Arial, sans-serif",
         color: "#fff",
@@ -170,7 +170,7 @@ export default class GameScene extends Phaser.Scene {
       }).setOrigin(0.5);
       
       // Yes button (restart game)
-      const yesBtn = this.add.text(-80, 50, "Sì", {
+      const yesBtn = this.add.text(-80, 50, "Yes", {
         fontSize: "20px",
         fontFamily: "Arial Black, Arial, sans-serif",
         color: "#fff",
