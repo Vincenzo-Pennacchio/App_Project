@@ -31,6 +31,36 @@ export default class GameScene extends Phaser.Scene {
     bg.fillGradientStyle(0x1a1aff, 1, 0xff1a75, 1, 0x00ffd0, 1, 0xfff700, 1, 1);
     bg.fillRect(0, 0, 600, 750);
 
+    // Exit button to return to StartScene
+    const exitBtn = this.add.text(300, 700, "Exit Game", {
+      fontSize: "24px",
+      fontFamily: "Arial Black, Arial, sans-serif",
+      color: "#222",
+      backgroundColor: "#ff1a75",
+      padding: { x: 16, y: 8 },
+      stroke: "#fff700",
+      strokeThickness: 2,
+      shadow: {
+        offsetX: 0,
+        offsetY: 0,
+        color: "#00ffd0",
+        blur: 12,
+        fill: true
+      }
+    }).setOrigin(0.5).setInteractive();
+    
+    this.tweens.add({
+      targets: exitBtn,
+      scale: { from: 1, to: 1.1 },
+      yoyo: true,
+      repeat: -1,
+      duration: 800
+    });
+    
+    exitBtn.on("pointerdown", () => {
+      this.scene.start("StartScene");
+    });
+
     this.drawGrid();
 
     // Glowing animated score
