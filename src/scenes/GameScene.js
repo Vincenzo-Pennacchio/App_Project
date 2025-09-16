@@ -136,9 +136,9 @@ export default class GameScene extends Phaser.Scene {
     // Disabilita input sulla griglia
     this.input.off("pointerdown");
 
-    const modal = this.add.container(300, 400);
+    const modal = this.add.container(300, 350);
     const bg = this.add.rectangle(0, 0, 480, 280, 0x1a0d2e, 0.9);
-    bg.setStroke(0xff1a75, 4);
+    bg.setStrokeStyle(4, 0xff1a75);
     
     // Check if it's a game over message
     const isGameOver = message.includes("vinto") || message.includes("Pareggio");
