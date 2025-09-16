@@ -49,36 +49,6 @@ export default class GameScene extends Phaser.Scene {
       }
     }).setOrigin(0.5);
 
-    // Exit button to return to StartScene (top left) - after grid and score
-    const exitBtn = this.add.text(80, 30, "Exit", {
-      fontSize: "20px",
-      fontFamily: "Arial Black, Arial, sans-serif",
-      color: "#fff",
-      backgroundColor: "#ff1a75",
-      padding: { x: 12, y: 6 },
-      stroke: "#fff700",
-      strokeThickness: 2,
-      shadow: {
-        offsetX: 0,
-        offsetY: 0,
-        color: "#00ffd0",
-        blur: 12,
-        fill: true
-      }
-    }).setOrigin(0.5).setInteractive().setDepth(100);
-    
-    this.tweens.add({
-      targets: exitBtn,
-      scale: { from: 1, to: 1.1 },
-      yoyo: true,
-      repeat: -1,
-      duration: 800
-    });
-    
-    exitBtn.on("pointerdown", () => {
-      this.scene.start("StartScene");
-    });
-
     this.tweens.add({
       targets: this.scoreText,
       scale: { from: 1, to: 1.08 },
@@ -177,25 +147,119 @@ export default class GameScene extends Phaser.Scene {
     this.input.off("pointerdown");
 
     const modal = this.add.container(300, 400);
-    const bg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8);
-    const text = this.add.text(0, -40, message, { fontSize: "28px", color: "#fff" }).setOrigin(0.5);
-    const btn = this.add.text(0, 50, "OK", {
-      fontSize: "24px",
-      backgroundColor: "#222",
-      color: "#0f0",
-      padding: { x: 12, y: 6 }
-    }).setOrigin(0.5).setInteractive();
+    const bg = this.add.rectangle(0, 0, 480, 280, 0x1a0d2e, 0.9);
+    bg.setStroke(0xff1a75, 4);
+    
+    // Check if it's a game over message
+    const isGameOver = message.includes("vinto") || message.includes("Pareggio");
+    
+    if (isGameOver) {
+      // Game over modal with play again options
+      const text = this.add.text(0, -60, message, {
+        fontSize: "28px",
+        fontFamily: "Arial Black, Arial, sans-serif",
+        color: "#fff",
+        stroke: "#fff700",
+        strokeThickness: 3,
+        wordWrap: { width: 450 },
+        align: "center",
+        shadow: {
+          offsetX: 0,
+          offsetY: 0,
+          color: "#00ffd0",
+          blur: 12,
+          fill: true
+        }
+      }).setOrigin(0.5);
+      
+      const playAgainText = this.add.text(0, -10, "Vuoi giocare ancora?", {
+        fontSize: "20px",
+        fontFamily: "Arial, sans-serif",
+        color: "#fff",
+        align: "center"
+      }).setOrigin(0.5);
+      
+      // Yes button (restart game)
+      const yesBtn = this.add.text(-80, 50, "Sì", {
+        fontSize: "20px",
+        fontFamily: "Arial Black, Arial, sans-serif",
+        color: "#fff",
+        backgroundColor: "#00ff88",
+        padding: { x: 20, y: 8 },
+        stroke: "#fff700",
+        strokeThickness: 2,
+        shadow: {
+          offsetX: 0,
+          offsetY: 0,
+          color: "#00ffd0",
+          blur: 10,
+          fill: true
+        }
+      }).setOrigin(0.5).setInteractive();
+      
+      // No button (return to start scene)
+      const noBtn = this.add.text(80, 50, "No", {
+        fontSize: "20px",
+        fontFamily: "Arial Black, Arial, sans-serif",
+        color: "#fff",
+        backgroundColor: "#ff1a75",
+        padding: { x: 20, y: 8 },
+        stroke: "#fff700",
+        strokeThickness: 2,
+        shadow: {
+          offsetX: 0,
+          offsetY: 0,
+          color: "#00ffd0",
+          blur: 10,
+          fill: true
+        }
+      }).setOrigin(0.5).setInteractive();
+      
+      // Button interactions
+      yesBtn.on("pointerdown", () => {
+        modal.destroy();
+        this.isModalOpen = false;
+        setTimeout(() => {
+          this.resetBoard();
+        }, 100);
+      });
+      
+      noBtn.on("pointerdown", () => {
+        this.scene.start("StartScene");
+      });
+      
+      modal.add([bg, text, playAgainText, yesBtn, noBtn]);
+      
+    } else {
+      // Regular message modal with OK button
+      const text = this.add.text(0, -40, message, {
+        fontSize: "28px",
+        fontFamily: "Arial Black, Arial, sans-serif",
+        color: "#fff",
+        stroke: "#fff700",
+        strokeThickness: 3
+      }).setOrigin(0.5);
+      
+      const btn = this.add.text(0, 50, "OK", {
+        fontSize: "20px",
+        fontFamily: "Arial Black, Arial, sans-serif",
+        color: "#fff",
+        backgroundColor: "#00ff88",
+        padding: { x: 20, y: 8 },
+        stroke: "#fff700",
+        strokeThickness: 2
+      }).setOrigin(0.5).setInteractive();
 
-    btn.on("pointerdown", () => {
-      modal.destroy();
-      this.isModalOpen = false;
-      // Delay re-enabling input to avoid accidental click on grid
-      setTimeout(() => {
-        this.resetBoard(); // 👈 restart automatico
-      }, 100);
-    });
+      btn.on("pointerdown", () => {
+        modal.destroy();
+        this.isModalOpen = false;
+        setTimeout(() => {
+          this.resetBoard();
+        }, 100);
+      });
 
-    modal.add([bg, text, btn]);
+      modal.add([bg, text, btn]);
+    }
   }
 
   drawO(x, y) {
