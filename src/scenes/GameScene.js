@@ -98,6 +98,16 @@ export default class GameScene extends Phaser.Scene {
       ease: "Cubic.easeOut"
     });
 
+    // Fade-in animation for exit button
+    exitBtn.setAlpha(0);
+    this.tweens.add({
+      targets: exitBtn,
+      alpha: 1,
+      duration: 600,
+      delay: 100,
+      ease: "Cubic.easeOut"
+    });
+
     this.enableInput();
   }
 
